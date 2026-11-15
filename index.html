@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الزاد | السوق الليبي الشامل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDKs with Your Exact Credentials -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBIezRyRQBAtzZ2qeQ32-NFnq9R7NQuvo",
+            authDomain: "alzad-libya.firebaseapp.com",
+            projectId: "alzad-libya",
+            storageBucket: "alzad-libya.firebasestorage.app",
+            messagingSenderId: "220368156868",
+            appId: "1:220368156868:web:5349177ecd1a075eae3191",
+            measurementId: "G-8GEMST44G1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+        window.onSnapshot = onSnapshot;
+        window.query = query;
+        window.orderBy = orderBy;
+
+        window.initAlzadApp();
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        luxury: {
+                            dark: '#0B0F19',
+                            card: '#131B2E',
+                            gold: '#D4AF37',
+                            goldHover: '#C5A028',
+                            accent: '#1E293B',
+                            border: '#334155',
+                            inputBg: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        tajawal: ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background-color: #0B0F19; color: #FFFFFF; }
+        .gold-gradient { background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA771C 100%); }
+        .gold-text { background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0B0F19; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 4px; }
+        
+        input, select, textarea { color: #FFFFFF !important; background-color: #1E293B !important; border-color: #475569 !important; font-weight: 600 !important; }
+        input::placeholder, textarea::placeholder { color: #94A3B8 !important; opacity: 1 !important; }
+        p, span, label, h1, h2, h3, h4 { color: #F8FAFC !important; }
+        .gold-text, .text-gold { color: #D4AF37 !important; -webkit-text-fill-color: #D4AF37 !important; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between custom-scrollbar pb-24">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-luxury-dark/95 backdrop-blur-md border-b border-luxury-border px-4 py-3 shadow-xl">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-11 h-11 rounded-xl gold-gradient flex items-center justify-center shadow-lg p-0.5">
+                    <svg viewBox="0 0 100 100" class="w-full h-full fill-luxury-dark">
+                        <path d="M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 Z" fill="none" stroke="#0B0F19" stroke-width="6"/>
+                        <text x="50" y="65" font-size="45" font-weight="900" text-anchor="middle" fill="#0B0F19" font-family="Tajawal">ز</text>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black gold-text tracking-wide">الزاد</h1>
+                    <p class="text-xs text-gray-300">السوق الليبي الشامل</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <button onclick="switchTab('cart')" class="relative p-2.5 rounded-xl bg-luxury-card border border-luxury-border text-gold hover:bg-luxury-border transition">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span id="cartCount" class="absolute -top-1 -right-1 w-5 h-5 bg-gold text-luxury-dark font-bold text-xs rounded-full flex items-center justify-center">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="max-w-7xl mx-auto w-full px-4 py-6 flex-grow">
+        <div class="text-center py-20 text-gold">
+            <i class="fa-solid fa-spinner fa-spin text-4xl mb-3"></i>
+            <p class="text-sm">جاري الاتصال السحابي بقاعدة البيانات...</p>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-luxury-dark/95 backdrop-blur-md border-t border-luxury-border px-2 py-2 shadow-2xl">
+        <div class="max-w-md mx-auto grid grid-cols-5 gap-1 text-center">
+            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 text-gold transition">
+                <i class="fa-solid fa-house text-lg mb-1"></i>
+                <span class="text-[10px] font-bold">السوق</span>
+            </button>
+            <button onclick="switchTab('categories')" id="nav-categories" class="flex flex-col items-center py-1 text-gray-300 hover:text-gold transition">
+                <i class="fa-solid fa-shapes text-lg mb-1"></i>
+                <span class="text-[10px] font-bold">الأقسام</span>
+            </button>
+            <button onclick="switchTab('merchant')" id="nav-merchant" class="flex flex-col items-center py-1 text-gray-300 hover:text-gold transition">
+                <i class="fa-solid fa-shop text-lg mb-1"></i>
+                <span class="text-[10px] font-bold">حساب التاجر</span>
+            </button>
+            <button onclick="switchTab('admin')" id="nav-admin" class="flex flex-col items-center py-1 text-gray-300 hover:text-gold transition">
+                <i class="fa-solid fa-lock text-lg mb-1"></i>
+                <span class="text-[10px] font-bold">الإدارة</span>
+            </button>
+            <button onclick="switchTab('bot')" id="nav-bot" class="flex flex-col items-center py-1 text-gray-300 hover:text-gold transition">
+                <i class="fa-solid fa-robot text-lg mb-1"></i>
+                <span class="text-[10px] font-bold">المساعد</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        const ADMIN_PASSCODE = "admin2026";
+        let isAdminAuthenticated = false;
+        let currentMerchant = JSON.parse(localStorage.getItem('alzad_current_merchant')) || null;
+        let merchantAuthMode = 'login'; 
+
+        let products = [];
+        let registeredMerchants = [];
+        let totalRevenue = 250;
+
+        let currentTab = 'home';
+        let selectedCategory = 'all';
+        let selectedCity = 'all';
+        let searchQuery = '';
+        let cart = [];
+
+        const libyanCities = [
+            "طرابلس", "بنغازي", "مصراتة", "الزاوية", "زليتن", 
+            "الخمس", "غريان", "بني وليد", "زوارة", "صبراتة", 
+            "سبها", "البيضاء", "طبرق", "درنة", "إجدابيا", 
+            "سرت", "المرج", "ترهونة", "يفرن", "الكفرة"
+        ];
+
+        const categories = [
+            { id: 'all', name: 'الكل', icon: 'fa-border-all' },
+            { id: 'cars', name: 'سيارات ومركبات', icon: 'fa-car' },
+            { id: 'machinery', name: 'معدات وورش', icon: 'fa-screwdriver-wrench' },
+            { id: 'electronics', name: 'إلكترونيات', icon: 'fa-laptop' },
+            { id: 'realestate', name: 'عقارات', icon: 'fa-building' },
+            { id: 'furniture', name: 'أثاث ومنازل', icon: 'fa-couch' },
+            { id: 'fashion', name: 'أزياء وملابس', icon: 'fa-shirt' },
+            { id: 'food', name: 'مواد غذائية', icon: 'fa-basket-shopping' },
+            { id: 'spareparts', name: 'قطع غيار', icon: 'fa-gear' },
+            { id: 'services', name: 'خدمات مهنية', icon: 'fa-briefcase' }
+        ];
+
+        window.initAlzadApp = function() {
+            window.onSnapshot(window.collection(window.db, "products"), (snapshot) => {
+                products = [];
+                snapshot.forEach((doc) => {
+                    products.push({ id: doc.id, ...doc.data() });
+                });
+                renderContent();
+            });
+
+            window.onSnapshot(window.collection(window.db, "merchants"), (snapshot) => {
+                registeredMerchants = [];
+                snapshot.forEach((doc) => {
+                    registeredMerchants.push({ id: doc.id, ...doc.data() });
+                });
+                if(currentMerchant) {
+                    let updated = registeredMerchants.find(m => m.phone === currentMerchant.phone);
+                    if(updated) {
+                        currentMerchant = updated;
+                        localStorage.setItem('alzad_current_merchant', JSON.stringify(currentMerchant));
+                    }
+                }
+                renderContent();
+            });
+        };
+
+        function switchTab(tab) {
+            currentTab = tab;
+            ['home', 'categories', 'merchant', 'admin', 'bot', 'cart'].forEach(t => {
+                const el = document.getElementById(`nav-${t}`);
+                if(el) {
+                    el.classList.remove('text-gold');
+                    el.classList.add('text-gray-300');
+                }
+            });
+            const activeEl = document.getElementById(`nav-${tab}`);
+            if(activeEl) {
+                activeEl.classList.remove('text-gray-300');
+                activeEl.classList.add('text-gold');
+            }
+            renderContent();
+            window.scrollTo(0, 0);
+        }
+
+        function renderContent() {
+            const container = document.getElementById('mainContent');
+            if(currentTab === 'home') container.innerHTML = renderHomeHTML();
+            else if(currentTab === 'categories') container.innerHTML = renderCategoriesHTML();
+            else if(currentTab === 'merchant') container.innerHTML = renderMerchantHTML();
+            else if(currentTab === 'admin') container.innerHTML = renderAdminHTML();
+            else if(currentTab === 'bot') container.innerHTML = renderBotHTML();
+            else if(currentTab === 'cart') container.innerHTML = renderCartHTML();
+        }
+
+        function renderHomeHTML() {
+            let filtered = products.filter(p => {
+                let matchCat = selectedCategory === 'all' || p.category === selectedCategory;
+                let matchCity = selectedCity === 'all' || p.city === selectedCity;
+                let matchSearch = (p.name || '').includes(searchQuery) || (p.merchant || '').includes(searchQuery);
+                return matchCat && matchCity && matchSearch;
+            });
+
+            return `
+                <div class="mb-6 bg-gradient-to-r from-luxury-card to-luxury-accent border border-luxury-border rounded-2xl p-6 text-center shadow-xl">
+                    <h2 class="text-2xl font-black gold-text mb-2">منصة الزاد التجارية</h2>
+                    <p class="text-sm text-gray-200 mb-4 font-bold">سوق ليبيا الشامل لكل التجار، الورش، والشركات.. (متصل سحابياً بـ Firebase ☁️)</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="relative flex-grow">
+                            <i class="fa-solid fa-magnifying-glass absolute right-4 top-3.5 text-gray-300"></i>
+                            <input type="text" oninput="handleSearch(this.value)" value="${searchQuery}" placeholder="ابحث عن سيارة، معدة ورشة، منتج..." class="w-full bg-luxury-inputBg border border-luxury-border rounded-xl pr-11 pl-4 py-3 text-sm text-white focus:outline-none focus:border-gold">
+                        </div>
+                        <select onchange="handleCityFilter(this.value)" class="bg-luxury-inputBg border border-luxury-border rounded-xl px-4 py-3 text-sm text-gold font-bold focus:outline-none focus:border-gold">
+                            <option value="all">كل المدن الليبية (20 مدينة)</option>
+                            ${libyanCities.map(c => `<option value="${c}" ${selectedCity === c ? 'selected' : ''}>${c}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-6 flex space-x-3 space-x-reverse overflow-x-auto pb-2 custom-scrollbar">
+                    ${categories.map(cat => `
+                        <button onclick="handleCategoryFilter('${cat.id}')" class="flex items-center space-x-2 space-x-reverse px-4 py-2.5 rounded-xl border whitespace-nowrap transition ${selectedCategory === cat.id ? 'bg-gold text-luxury-dark font-bold border-gold shadow-lg' : 'bg-luxury-card text-gray-200 font-bold border-luxury-border hover:border-gold'}">
+                            <i class="fa-solid ${cat.icon}"></i>
+                            <span class="text-xs">${cat.name}</span>
+                        </button>
+                    `).join('')}
+                </div>
+
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-white">المنتجات المعروضة (${filtered.length})</h3>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    ${filtered.length === 0 ? `
+                        <div class="col-span-full py-12 text-center text-gray-300 font-bold">
+                            <i class="fa-solid fa-box-open text-4xl mb-3 text-gray-400"></i>
+                            <p>لا توجد منتجات مطابقة حالياً. كن أول من يضيف منتجاً!</p>
+                        </div>
+                    ` : filtered.map(p => `
+                        <div class="bg-luxury-card border border-luxury-border rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between hover:border-gold/50 transition">
+                            <div>
+                                <div class="relative h-48 overflow-hidden bg-luxury-dark">
+                                    <img src="${p.image || 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=80'}" alt="${p.name}" class="w-full h-full object-cover">
+                                    <span class="absolute top-3 right-3 bg-luxury-dark/95 backdrop-blur-md text-gold text-xs px-2.5 py-1 rounded-lg border border-luxury-border font-bold">
+                                        <i class="fa-solid fa-location-dot ml-1"></i> ${p.city}
+                                    </span>
+                                </div>
+                                <div class="p-4">
+                                    <span class="text-xs text-gold uppercase tracking-wider font-bold">${p.merchant}</span>
+                                    <h4 class="text-base font-bold text-white mt-1 mb-2 line-clamp-1">${p.name}</h4>
+                                    <p class="text-xs text-gray-200 mb-3 line-clamp-2">${p.description}</p>
+                                </div>
+                            </div>
+                            <div class="p-4 pt-0 flex items-center justify-between border-t border-luxury-border/55 mt-2">
+                                <span class="text-lg font-black text-gold">${Number(p.price).toLocaleString()} د.ل</span>
+                                <div class="flex gap-2">
+                                    <a href="https://wa.me/218${p.phone || '912345678'}?text=السلام عليكم، أود الاستفسار عن منتجكم: ${encodeURIComponent(p.name)}" target="_blank" class="px-3 py-2 bg-green-600 hover:bg-green-500 text-white text-xs font-bold rounded-xl transition shadow-md flex items-center gap-1">
+                                        <i class="fa-brands fa-whatsapp"></i> واتساب
+                                    </a>
+                                    <button onclick="addToCart('${p.id}')" class="px-3 py-2 bg-gold text-luxury-dark text-xs font-bold rounded-xl hover:bg-goldHover transition shadow-md">
+                                        أطلب
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderCategoriesHTML() {
+            return `
+                <div class="mb-6">
+                    <h2 class="text-xl font-black gold-text mb-1">أقسام منصة الزاد</h2>
+                    <p class="text-xs text-gray-200 font-bold">اختر القسم المناسب لتصفح البضائع والمعدات والسيارات.</p>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    ${categories.filter(c => c.id !== 'all').map(cat => `
+                        <div onclick="selectedCategory='${cat.id}'; switchTab('home');" class="bg-luxury-card border border-luxury-border rounded-2xl p-6 text-center cursor-pointer hover:border-gold transition group shadow-xl">
+                            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-luxury-inputBg border border-luxury-border flex items-center justify-center text-gold text-2xl group-hover:bg-gold group-hover:text-luxury-dark transition">
+                                <i class="fa-solid ${cat.icon}"></i>
+                            </div>
+                            <h4 class="text-sm font-bold text-white">${cat.name}</h4>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderMerchantHTML() {
+            if(!currentMerchant) {
+                return `
+                    <div class="max-w-md mx-auto bg-luxury-card border border-luxury-border rounded-2xl p-6 shadow-2xl">
+                        <div class="text-center mb-6">
+                            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl gold-gradient flex items-center justify-center text-luxury-dark text-2xl shadow-lg">
+                                <i class="fa-solid fa-shop"></i>
+                            </div>
+                            <h2 class="text-xl font-black gold-text">بوابة التجار والشركات</h2>
+                            <p class="text-xs text-gray-200 mt-1 font-bold">سجل دخولك لإدارة متجرك أو أنشئ حساباً جديداً مجاناً</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 p-1 bg-luxury-inputBg rounded-xl mb-6 border border-luxury-border">
+                            <button onclick="merchantAuthMode='login'; renderContent();" class="py-2 text-xs font-bold rounded-lg transition ${merchantAuthMode === 'login' ? 'bg-gold text-luxury-dark' : 'text-gray-200 hover:text-white'}">تسجيل الدخول</button>
+                            <button onclick="merchantAuthMode='register'; renderContent();" class="py-2 text-xs font-bold rounded-lg transition ${merchantAuthMode === 'register' ? 'bg-gold text-luxury-dark' : 'text-gray-200 hover:text-white'}">حساب تاجر جديد</button>
+                        </div>
+
+                        ${merchantAuthMode === 'login' ? `
+                            <form onsubmit="handleMerchantLogin(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs text-white font-bold mb-1">رقم الهاتف</label>
+                                    <input type="tel" id="loginPhone" required placeholder="مثال: 0912345678" class="w-full bg-luxury-inputBg border border-luxury-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-white font-bold mb-1">كلمة المرور</label>
+                                    <input type="password" id="loginPass" required placeholder="••••••••" class="w-full bg-luxury-inputBg border border-luxury-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold">
+                                </div>
+                                <button type="submit" class="w-full py-3 bg-gold text-luxury-dark font-bold text-sm rounded-xl hover:bg-goldHover transition shadow-lg">
+                                    دخول إلى المتجر
+                                </button>
+                            </form>
+                        ` : `
+                            <form onsubmit="handleMerchantRegister(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs text-white font-bold mb-1">اسم المتجر أو المعرض</label>
+                                    <input type="text" id="regName" required placeholder="مثال: معرض الأمانة للسيارات" class="w-full bg-luxury-inputBg border border-luxury-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-white font-bold mb-1">المدينة</label>
+                                    <select id="regCity" class="w-full bg-luxury-inputBg border border-luxury-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold">
+                                        ${libyanCities.map(c => `<option value="${c}" class="bg-luxury-inputBg text-white">${c}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-white font-bold mb-1">رقم الهاتف (للتواصل عبر واتساب)</label>
+                                    <input type="tel" id="regPhone" required placeholder="09XXXXXXXX" class="w-full bg-luxury-inputBg border border-luxury-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-white font-bold mb-1">كلمة المرور</label>
+                                    <input type="password" id="regPass" required placeholder="أدخل كلمة سر قوية" class="w-full bg-luxury-inputBg border border-luxury-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold">
+                                </div>
+                                <button type="submit" class="w-full py-3 bg-gold text-luxury-dark font-bold text-sm rounded-xl hover:bg-goldHover transition shadow-lg">
+                                    إنشاء حساب مجاني (3 منتجات مجاناً)
+                                </button>
+                            </form>
+                        `}
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="bg-luxury-card border border-luxury-border rounded-2xl p-6 shadow-xl mb-6">
+                    <div class="flex items-center justify-between mb-4 pb-4 border-b border-luxury-border">
+                        <div>
+                            <h2 class="text-xl font-black gold-text">${currentMerchant.name}</h2>
+                            <p class="text-xs text-gray-200 font-bold">المدينة: ${currentMerchant.city} | هاتف: ${currentMerchant.phone}</p>
+                        </div>
+                        <button onclick="logoutMerchant()" class="px-3 py-1.5 bg-red-500/20 text-red-300 border border-red-500/40 rounded-xl text-xs font-bold hover:bg-red-500 hover:text-white transition">
+                            <i class="fa-solid fa-right-from-bracket ml-1"></i> خروج
+                        </button>
+                    </div>
+
+                    <div class="bg-luxury-inputBg border border-luxury-border rounded-xl p-4 mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-bold text-white">حالة الباقة الحالية:</span>
+                            <span class="text-xs px-2.5 py-1 rounded-lg ${currentMerchant.isSubscribed ? 'bg-green-500/20 text-green-300 border border-green-500/40 font-bold' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold'}">
+                                ${currentMerchant.isSubscribed ? 'باقة غير محدودة (مفعلة ✅)' : 'الباقة المجانية'}
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-200 mb-3 font-bold">المنتجات المضافة: <strong class="text-white">${currentMerchant.itemsCount || 0}</strong> من أصل <strong class="text-white">3</strong> مجانية.</p>
+                        ${!currentMerchant.isSubscribed ? `
+                            <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-200 text-xs flex justify-between items-center font-bold">
+                                <span>اشتراك المنصة غير المحدود: <strong class="text-white">50 د.ل شهرياً</strong>.</span>
+                                <button onclick="requestSubscription()" class="px-3 py-1.5 bg-gold text-luxury-dark font-bold rounded-lg text-xs">طلب تفعيل</button>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <h3 class="text-base font-bold text-white mb-3"><i class="fa-solid fa-plus-circle text-gold ml-1"></i> إضافة منتج جديد للسوق</h3>
+                    <form onsubmit="handleAddRealProduct(event)" class="space-y-3 bg-luxury-inputBg p-4 rounded-xl border border-luxury-border">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-white font-bold mb-1">اسم المنتج</label>
+                                <input type="text" id="prodName" required placeholder="مثال: مولد كهربائي كاتم صوت" class="w-full bg-luxury-card border border-luxury-border rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-gold">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-white font-bold mb-1">السعر (دينار ليبي)</label>
+                                <input type="number" id="prodPrice" required placeholder="مثال: 1850" class="w-full bg-luxury-card border border-luxury-border rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-gold">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-white font-bold mb-1">القسم</label>
+                            <select id="prodCategory" class="w-full bg-luxury-card border border-luxury-border rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-gold">
+                                ${categories.filter(c => c.id !== 'all').map(c => `<option value="${c.id}" class="bg-luxury-card text-white">${c.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-white font-bold mb-1">صورة المنتج (من هاتف)</label>
+                            <input type="file" id="prodImageFile" accept="image/*" class="w-full bg-luxury-card border border-luxury-border rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none file:bg-gold file:text-luxury-dark file:border-0 file:rounded-lg file:px-3 file:py-1 file:font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-white font-bold mb-1">وصف مختصر للمنتج</label>
+                            <input type="text" id="prodDesc" required placeholder="اكتب المواصفات والحالة..." class="w-full bg-luxury-card border border-luxury-border rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-gold">
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-gold text-luxury-dark font-bold text-xs rounded-xl hover:bg-goldHover transition shadow-lg">
+                            نشر المنتج سحابياً الآن 🚀
+                        </button>
+                    </form>
+                </div>
+            `;
+        }
+
+        function renderAdminHTML() {
+            if(!isAdminAuthenticated) {
+                return `
+                    <div class="max-w-md mx-auto bg-luxury-card border border-luxury-border rounded-2xl p-6 shadow-2xl text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-luxury-inputBg border border-gold flex items-center justify-center text-gold text-2xl shadow-lg">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h2 class="text-xl font-black gold-text mb-1">منطقة الإدارة المحمية</h2>
+                        <p class="text-xs text-gray-200 mb-6 font-bold">مخصصة لمالك المنصة. أضف رمز الدخول.</p>
+                        
+                        <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                            <input type="password" id="adminPassInput" required placeholder="أدخل كلمة سر الإدارة" class="w-full text-center bg-luxury-inputBg border border-luxury-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold tracking-widest font-bold">
+                            <button type="submit" class="w-full py-3 bg-gold text-luxury-dark font-bold text-sm rounded-xl hover:bg-goldHover transition shadow-lg">
+                                فتح لوحة الإدارة
+                            </button>
+                        </form>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-xl font-black gold-text mb-1">لوحة الإدارة السحابية</h2>
+                        <p class="text-xs text-gray-200 font-bold">تحكم كامل بالتجار والاشتراكات.</p>
+                    </div>
+                    <button onclick="isAdminAuthenticated=false; renderContent();" class="px-3 py-1.5 bg-red-500/20 text-red-300 border border-red-500/40 rounded-xl text-xs font-bold">
+                        قفل اللوحة <i class="fa-solid fa-lock mr-1"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-luxury-card border border-luxury-border rounded-2xl p-5 shadow-xl">
+                        <span class="text-xs text-gray-200 font-bold">إجمالي الأرباح</span>
+                        <h3 class="text-2xl font-black gold-text mt-1">${totalRevenue} د.ل</h3>
+                    </div>
+                    <div class="bg-luxury-card border border-luxury-border rounded-2xl p-5 shadow-xl">
+                        <span class="text-xs text-gray-200 font-bold">التجار المسجلون</span>
+                        <h3 class="text-2xl font-black text-white mt-1">${registeredMerchants.length} تاجر</h3>
+                    </div>
+                    <div class="bg-luxury-card border border-luxury-border rounded-2xl p-5 shadow-xl">
+                        <span class="text-xs text-gray-200 font-bold">المنتجات السحابية</span>
+                        <h3 class="text-2xl font-black text-amber-400 mt-1">${products.length} منتج</h3>
+                    </div>
+                </div>
+
+                <div class="bg-luxury-card border border-luxury-border rounded-2xl p-6 shadow-xl">
+                    <h3 class="text-base font-bold text-white mb-4">قائمة التجار المسجلين وتفعيل الاشتراكات</h3>
+                    <div class="space-y-3">
+                        ${registeredMerchants.length === 0 ? `
+                            <p class="text-xs text-gray-200 font-bold">لا توجد حسابات تجار مسجلة بعد.</p>
+                        ` : registeredMerchants.map(m => `
+                            <div class="flex items-center justify-between p-4 bg-luxury-inputBg border border-luxury-border rounded-xl">
+                                <div>
+                                    <h4 class="text-sm font-bold text-white">${m.name} (${m.city})</h4>
+                                    <p class="text-xs text-gray-200 font-bold">هاتف: ${m.phone} | المنتجات: ${m.itemsCount || 0}</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs px-2 py-1 rounded ${m.isSubscribed ? 'bg-green-500/20 text-green-300 font-bold' : 'bg-amber-500/20 text-amber-300 font-bold'}">
+                                        ${m.isSubscribed ? 'مشترك' : 'مجاني'}
+                                    </span>
+                                    ${!m.isSubscribed ? `
+                                        <button onclick="approveMerchantSub('${m.id}')" class="px-3 py-1 bg-gold text-luxury-dark font-bold text-xs rounded-lg">تفعيل (50 د.ل)</button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderBotHTML() {
+            return `
+                <div class="bg-luxury-card border border-luxury-border rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center space-x-3 space-x-reverse mb-6 pb-4 border-b border-luxury-border">
+                        <div class="w-10 h-10 rounded-xl gold-gradient flex items-center justify-center">
+                            <i class="fa-solid fa-robot text-luxury-dark text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-white">المساعد الذكي لمنصة الزاد</h2>
+                            <p class="text-xs text-gray-200 font-bold">للرد التلقائي على استفسارات التجار والزبائن.</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <button onclick="botAnswer(1)" class="w-full text-right p-3 bg-luxury-inputBg border border-luxury-border rounded-xl text-xs text-gold font-bold hover:border-gold transition">
+                            كيف أسجل كتاجر وأضيف منتجاتي؟
+                        </button>
+                        <button onclick="botAnswer(2)" class="w-full text-right p-3 bg-luxury-inputBg border border-luxury-border rounded-xl text-xs text-gold font-bold hover:border-gold transition">
+                            ما هي تفاصيل وعمولة الاشتراك الشهري (50 د.ل)؟
+                        </button>
+                        <button onclick="botAnswer(3)" class="w-full text-right p-3 bg-luxury-inputBg border border-luxury-border rounded-xl text-xs text-gold font-bold hover:border-gold transition">
+                            كيف يتم التوصيل والدفع في المدن الليبية؟
+                        </button>
+                        <div id="botReply" class="p-4 bg-gold/15 border border-gold/40 rounded-xl text-xs text-gold font-bold mt-4 hidden"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCartHTML() {
+            let total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+            return `
+                <div class="bg-luxury-card border border-luxury-border rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-xl font-black gold-text mb-4">سلة المشتريات</h2>
+                    ${cart.length === 0 ? `
+                        <p class="text-xs text-gray-200 py-8 text-center font-bold">سلة المشتريات فارغة حالياً.</p>
+                    ` : `
+                        <div class="space-y-3 mb-6">
+                            ${cart.map((item, index) => `
+                                <div class="flex items-center justify-between p-3 bg-luxury-inputBg border border-luxury-border rounded-xl">
+                                    <div class="flex items-center space-x-3 space-x-reverse">
+                                        <img src="${item.image}" class="w-12 h-12 object-cover rounded-lg">
+                                        <div>
+                                            <h4 class="text-sm font-bold text-white">${item.name}</h4>
+                                            <span class="text-xs text-gold font-bold">${Number(item.price).toLocaleString()} د.ل</span>
+                                        </div>
+                                    </div>
+                                    <button onclick="removeFromCart(${index})" class="text-red-400 hover:text-red-300 text-xs px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="border-t border-luxury-border pt-4 flex justify-between items-center mb-6">
+                            <span class="text-sm font-bold text-white">الإجمالي الكلي:</span>
+                            <span class="text-xl font-black gold-text">${total.toLocaleString()} د.ل</span>
+                        </div>
+                        <button onclick="checkout()" class="w-full py-3 bg-gold text-luxury-dark font-bold text-xs rounded-xl hover:bg-goldHover transition shadow-lg">
+                            تأكيد الطلب (الدفع عند الاستلام)
+                        </button>
+                    `}
+                </div>
+            `;
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('adminPassInput').value;
+            if(pass === ADMIN_PASSCODE) {
+                isAdminAuthenticated = true;
+                renderContent();
+            } else {
+                alert('كلمة السر غير صحيحة!');
+            }
+        }
+
+        async function handleMerchantRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const city = document.getElementById('regCity').value;
+            const phone = document.getElementById('regPhone').value;
+            const password = document.getElementById('regPass').value;
+
+            if(registeredMerchants.some(m => m.phone === phone)) {
+                alert('رقم الهاتف مسجل مسبقاً!');
+                return;
+            }
+
+            const newMerchant = { phone, password, name, city, itemsCount: 0, maxFree: 3, isSubscribed: false };
+            try {
+                const docRef = await window.addDoc(window.collection(window.db, "merchants"), newMerchant);
+                currentMerchant = { id: docRef.id, ...newMerchant };
+                localStorage.setItem('alzad_current_merchant', JSON.stringify(currentMerchant));
+                alert('تم إنشاء حسابك السحابي بنجاح! ولديك 3 منتجات مجانية.');
+                renderContent();
+            } catch(err) {
+                alert('حدث خطأ في التسجيل السحابي. تأكد من تفعيل Firestore Database في لوحة تحكم Firebase.');
+            }
+        }
+
+        function handleMerchantLogin(e) {
+            e.preventDefault();
+            const phone = document.getElementById('loginPhone').value;
+            const pass = document.getElementById('loginPass').value;
+
+            const found = registeredMerchants.find(m => m.phone === phone && m.password === pass);
+            if(found) {
+                currentMerchant = found;
+                localStorage.setItem('alzad_current_merchant', JSON.stringify(currentMerchant));
+                renderContent();
+            } else {
+                alert('رقم الهاتف أو كلمة المرور غير صحيحة!');
+            }
+        }
+
+        function logoutMerchant() {
+            currentMerchant = null;
+            localStorage.removeItem('alzad_current_merchant');
+            renderContent();
+        }
+
+        async function handleAddRealProduct(e) {
+            e.preventDefault();
+            if((currentMerchant.itemsCount || 0) >= currentMerchant.maxFree && !currentMerchant.isSubscribed) {
+                alert('لقد استهلكت الـ 3 منتجات المجانية! يرجى التواصل مع الإدارة لتفعيل الاشتراك الشهري (50 د.ل).');
+                return;
+            }
+
+            const name = document.getElementById('prodName').value;
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const category = document.getElementById('prodCategory').value;
+            const description = document.getElementById('prodDesc').value;
+            const fileInput = document.getElementById('prodImageFile');
+
+            let imageUrl = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=80';
+
+            if(fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = async function(uploadEvent) {
+                    imageUrl = uploadEvent.target.result;
+                    await saveProductToCloud(name, price, category, description, imageUrl);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                await saveProductToCloud(name, price, category, description, imageUrl);
+            }
+        }
+
+        async function saveProductToCloud(name, price, category, description, image) {
+            try {
+                const newProd = {
+                    name,
+                    category,
+                    price,
+                    city: currentMerchant.city,
+                    merchant: currentMerchant.name,
+                    phone: currentMerchant.phone,
+                    image,
+                    description,
+                    createdAt: Date.now()
+                };
+
+                await window.addDoc(window.collection(window.db, "products"), newProd);
+
+                currentMerchant.itemsCount = (currentMerchant.itemsCount || 0) + 1;
+                await window.updateDoc(window.doc(window.db, "merchants", currentMerchant.id), {
+                    itemsCount: currentMerchant.itemsCount
+                });
+
+                localStorage.setItem('alzad_current_merchant', JSON.stringify(currentMerchant));
+                alert('تم نشر منتجك في السوق الليبي بنجاح سحابياً!');
+                renderContent();
+            } catch(err) {
+                alert('حدث خطأ أثناء رفع المنتج. تأكد من تفعيل Firestore.');
+            }
+        }
+
+        async function approveMerchantSub(merchantId) {
+            try {
+                await window.updateDoc(window.doc(window.db, "merchants", merchantId), {
+                    isSubscribed: true
+                });
+                totalRevenue += 50;
+                alert('تم تفعيل اشتراك التاجر بنجاح وإضافة 50 د.ل للإيرادات!');
+                renderContent();
+            } catch(err) {
+                alert('حدث خطأ أثناء التفعيل.');
+            }
+        }
+
+        function requestSubscription() {
+            alert('يرجى تحويل قيمة الاشتراك (50 د.ل) عبر رصيد أو مصرفي إلى الإدارة، وسيتم تفعيل حسابك فوراً.');
+        }
+
+        function handleSearch(val) { searchQuery = val; renderContent(); }
+        function handleCityFilter(city) { selectedCity = city; renderContent(); }
+        function handleCategoryFilter(cat) { selectedCategory = cat; renderContent(); }
+
+        function addToCart(productId) {
+            const prod = products.find(p => p.id === productId);
+            if(prod) {
+                cart.push(prod);
+                document.getElementById('cartCount').innerText = cart.length;
+                alert('تمت إضافة المنتج إلى السلة!');
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            document.getElementById('cartCount').innerText = cart.length;
+            renderContent();
+        }
+
+        function checkout() {
+            alert('تم استلام طلبك بنجاح! سيتم التواصل معك وتوصيل الطلب.');
+            cart = [];
+            document.getElementById('cartCount').innerText = 0;
+            switchTab('home');
+        }
+
+        function botAnswer(type) {
+            const replyBox = document.getElementById('botReply');
+            replyBox.classList.remove('hidden');
+            if(type === 1) replyBox.innerHTML = '<strong>الرد:</strong> اضغط على "حساب التاجر"، أنشئ حساباً مجانياً، وأضف منتجاتك بصور من هاتفك مباشرة.';
+            else if(type === 2) replyBox.innerHTML = '<strong>الرد:</strong> اشتراك 50 د.ل شهرياً يتيح لك إضافة منتجات غير محدودة والظهور في 20 مدينة.';
+            else if(type === 3) replyBox.innerHTML = '<strong>الرد:</strong> التوصيل والدفع يتم بالتنسيق المباشر مع التاجر عبر زر الواتساب أو الدفع عند الاستلام.';
+        }
+    </script>
+</body>
+</html>
