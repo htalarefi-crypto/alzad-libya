@@ -8,9 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-        }
+        body { font-family: 'Cairo', sans-serif; }
     </style>
 </head>
 <body class="bg-slate-900 text-gray-100 min-h-screen flex flex-col justify-between">
@@ -47,8 +45,8 @@
             </div>
         </section>
 
-        <!-- Admin Section (Protected Area with Password & Recovery Options) -->
-        <section class="max-w-md mx-auto bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 my-8">
+        <!-- 1. Admin Login Section (Visible by default) -->
+        <section id="login-section" class="max-w-md mx-auto bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 my-8">
             <div class="text-center mb-6">
                 <div class="w-14 h-14 bg-slate-900 mx-auto flex items-center justify-center rounded-2xl mb-3 border border-slate-700 text-emerald-400 shadow-inner">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
@@ -60,19 +58,49 @@
             <div class="space-y-4">
                 <input type="password" id="admin-pass" placeholder="أدخل كلمة سر الإدارة" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-center font-medium">
                 
-                <!-- Fixed Visible Button -->
-                <button onclick="alert('تم تسجيل الدخول بنجاح')" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition">
+                <!-- Login Trigger Button -->
+                <button onclick="handleLogin()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition cursor-pointer">
                     فتح لوحة الإدارة
                 </button>
 
-                <!-- Password Recovery & Change Options -->
+                <!-- Recovery Options -->
                 <div class="flex justify-between items-center text-xs text-gray-400 pt-2 px-1">
-                    <button onclick="alert('سيتم إرسال تعليمات استعادة كلمة المرور إلى البريد المرتبط بالنظام.')" class="hover:text-emerald-400 transition underline">
+                    <button onclick="alert('تم إرسال تعليمات استعادة كلمة المرور.')" class="hover:text-emerald-400 transition underline">
                         نسيت كلمة السر؟
                     </button>
-                    <button onclick="alert('خاصية تغيير كلمة المرور مفعلة. يمكنك تحديثها عبر لوحة التحكم بعد الدخول.')" class="hover:text-emerald-400 transition underline">
+                    <button onclick="alert('خاصية تغيير كلمة المرور مفعلة.')" class="hover:text-emerald-400 transition underline">
                         تغيير كلمة المرور
                     </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Admin Dashboard Section (Hidden by default, shown after login) -->
+        <section id="admin-dashboard" class="hidden space-y-6">
+            <div class="flex justify-between items-center bg-slate-800 p-4 rounded-2xl border border-slate-700">
+                <div>
+                    <h3 class="text-xl font-bold text-white">لوحة الإدارة السحابية</h3>
+                    <p class="text-gray-400 text-sm">تحكم كامل بالجار والاشتراكات والمنصة.</p>
+                </div>
+                <button onclick="handleLogout()" class="bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    قفل اللوحة
+                </button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                    <span class="text-gray-400 text-sm">إجمالي الأرباح</span>
+                    <h4 class="text-2xl font-black text-emerald-400 mt-1">250 د.ل</h4>
+                </div>
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                    <span class="text-gray-400 text-sm">التجار المسجلون</span>
+                    <h4 class="text-2xl font-black text-white mt-1">0 تاجر</h4>
+                </div>
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                    <span class="text-gray-400 text-sm">المنتجات السحابية</span>
+                    <h4 class="text-2xl font-black text-emerald-400 mt-1">0 منتج</h4>
                 </div>
             </div>
         </section>
@@ -84,20 +112,19 @@
         <p>&copy; 2026 منصة الزاد - السوق الليبي الشامل. جميع الحقوق محفوظة.</p>
     </footer>
 
-    <!-- Firebase Config Placeholder -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <!-- Toggle Script -->
+    <script>
+        function handleLogin() {
+            // يمكنك تعيين كلمة المرور هنا أو السماح بالدخول مباشرة
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+        }
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBBIezRyQBATzZ2qe...",
-            authDomain: "alzad-libya.firebaseapp.com",
-            projectId: "alzad-libya",
-            storageBucket: "alzad-libya.appspot.com",
-            messagingSenderId: "220368156868",
-            appId: "1:220368156868:web:534917"
-        };
-        initializeApp(firebaseConfig);
+        function handleLogout() {
+            document.getElementById('admin-dashboard').classList.add('hidden');
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('admin-pass').value = '';
+        }
     </script>
 </body>
 </html>
