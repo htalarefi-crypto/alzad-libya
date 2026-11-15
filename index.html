@@ -20,10 +20,12 @@
                 <span class="bg-emerald-600 text-white font-black text-xl px-3 py-1.5 rounded-xl shadow-md">الزاد</span>
                 <h1 class="text-xl font-bold text-white">السوق الليبي الشامل</h1>
             </div>
-            <div>
-                <a href="#add-item" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-xl transition shadow-sm text-sm">
-                    + أضف إعلانك
-                </a>
+            <div class="flex items-center gap-3">
+                <button onclick="switchTab('market')" class="text-sm font-semibold text-gray-300 hover:text-emerald-400 transition">السوق</button>
+                <button onclick="switchTab('merchant')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-xl transition shadow-sm text-sm">
+                    + حساب التاجر (أضف بضاعتك)
+                </button>
+                <button onclick="switchTab('admin')" class="text-xs text-gray-400 hover:text-white border border-slate-700 px-3 py-2 rounded-xl">الإدارة</button>
             </div>
         </div>
     </header>
@@ -31,100 +33,277 @@
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
         
-        <!-- Hero Section -->
-        <section class="bg-gradient-to-br from-emerald-950 to-teal-900 text-white py-10 px-4 text-center rounded-2xl shadow-inner border border-slate-800 mb-8">
-            <div class="max-w-3xl mx-auto">
+        <!-- TAB 1: MARKETPLACE (Public Products) -->
+        <section id="tab-market" class="space-y-6">
+            <!-- Hero Search -->
+            <div class="bg-gradient-to-br from-emerald-950 to-teal-900 text-white py-10 px-4 text-center rounded-2xl shadow-inner border border-slate-800">
                 <h2 class="text-2xl md:text-3xl font-black mb-3 tracking-wide text-white">منصة الزاد لكل احتياجاتك في ليبيا</h2>
                 <p class="text-emerald-200 text-sm md:text-base mb-6 font-medium">بيع، اشتري، وتصفح أفضل السلع والخدمات بكل سهولة وأمان.</p>
                 <div class="relative max-w-xl mx-auto">
-                    <input type="text" placeholder="ابحث عما تبحث عنه (سيارات، عقارات، إلكترونيات...)" class="w-full py-3 px-4 pr-12 rounded-2xl text-white bg-slate-800 placeholder-gray-400 border border-slate-700 focus:outline-none focus:ring-4 focus:ring-emerald-500 shadow-lg text-sm font-medium">
+                    <input type="text" id="search-input" oninput="filterProducts()" placeholder="ابحث عن بضاعة، سيارات، إلكترونيات..." class="w-full py-3 px-4 pr-12 rounded-2xl text-white bg-slate-800 placeholder-gray-400 border border-slate-700 focus:outline-none focus:ring-4 focus:ring-emerald-500 shadow-lg text-sm font-medium">
                     <span class="absolute top-3.5 right-4 text-gray-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </span>
                 </div>
             </div>
-        </section>
 
-        <!-- 1. Admin Login Section (Visible by default) -->
-        <section id="login-section" class="max-w-md mx-auto bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 my-8">
-            <div class="text-center mb-6">
-                <div class="w-14 h-14 bg-slate-900 mx-auto flex items-center justify-center rounded-2xl mb-3 border border-slate-700 text-emerald-400 shadow-inner">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-1">منطقة الإدارة المحمية</h3>
-                <p class="text-gray-300 text-sm">مخصصة لمالك المنصة. أدخل رمز الدخول للتحكم.</p>
+            <!-- Products Grid Header -->
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white border-r-4 border-emerald-500 pr-3">سوق البضائع والمنتجات النشطة</h3>
+                <span id="product-count" class="text-sm text-gray-400">0 منتج معروض</span>
             </div>
-            
-            <div class="space-y-4">
-                <input type="password" id="admin-pass" placeholder="أدخل كلمة سر الإدارة" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-center font-medium">
-                
-                <!-- Login Trigger Button -->
-                <button onclick="handleLogin()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition cursor-pointer">
-                    فتح لوحة الإدارة
-                </button>
 
-                <!-- Recovery Options -->
-                <div class="flex justify-between items-center text-xs text-gray-400 pt-2 px-1">
-                    <button onclick="alert('تم إرسال تعليمات استعادة كلمة المرور.')" class="hover:text-emerald-400 transition underline">
-                        نسيت كلمة السر؟
-                    </button>
-                    <button onclick="alert('خاصية تغيير كلمة المرور مفعلة.')" class="hover:text-emerald-400 transition underline">
-                        تغيير كلمة المرور
-                    </button>
-                </div>
+            <!-- Dynamic Products Grid -->
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- JavaScript will inject products here -->
             </div>
         </section>
 
-        <!-- 2. Admin Dashboard Section (Hidden by default, shown after login) -->
-        <section id="admin-dashboard" class="hidden space-y-6">
-            <div class="flex justify-between items-center bg-slate-800 p-4 rounded-2xl border border-slate-700">
+        <!-- TAB 2: MERCHANT PORTAL (Where Merchants Add Goods) -->
+        <section id="tab-merchant" class="hidden max-w-2xl mx-auto bg-slate-800 p-6 md:p-8 rounded-2xl shadow-xl border border-slate-700 space-y-6">
+            <div class="border-b border-slate-700 pb-4">
+                <h3 class="text-xl font-bold text-white">بوابة التاجر - إضافة منتج أو بضاعة جديدة</h3>
+                <p class="text-gray-400 text-sm mt-1">أدخل تفاصيل بضاعتك هنا لتظهر مباشرة في السوق العام للرؤية والشراء.</p>
+            </div>
+
+            <form id="add-product-form" onsubmit="handleAddNewProduct(event)" class="space-y-4">
                 <div>
-                    <h3 class="text-xl font-bold text-white">لوحة الإدارة السحابية</h3>
-                    <p class="text-gray-400 text-sm">تحكم كامل بالجار والاشتراكات والمنصة.</p>
+                    <label class="block text-sm font-medium text-gray-300 mb-1">عنوان البضاعة أو المنتج</label>
+                    <input type="text" id="p-title" required placeholder="مثال: راوتر LTT K20 أو قطع غيار دودج" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 text-sm">
                 </div>
-                <button onclick="handleLogout()" class="bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    قفل اللوحة
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">السعر (د.ل)</label>
+                        <input type="text" id="p-price" required placeholder="مثال: 250 أو حسب السوم" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">القسم</label>
+                        <select id="p-category" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-emerald-500 text-sm">
+                            <option value="إلكترونيات">إلكترونيات</option>
+                            <option value="سيارات وقطع غيار">سيارات وقطع غيار</option>
+                            <option value="عقارات">عقارات</option>
+                            <option value="خدمات عامة">خدمات عامة</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-1">وصف تفصيلي للبضاعة</label>
+                    <textarea id="p-desc" rows="3" required placeholder="اكتب تفاصيل الحالة، المواصفات، أو وسيلة التواصل..." class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition">
+                    نشر البضاعة في السوق فوراً 🚀
                 </button>
+            </form>
+        </section>
+
+        <!-- TAB 3: ADMIN DASHBOARD & SECURITY (Password management) -->
+        <section id="tab-admin" class="hidden max-w-md mx-auto space-y-6">
+            <!-- Login Box -->
+            <div id="admin-login-box" class="bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700">
+                <div class="text-center mb-6">
+                    <h3 class="text-xl font-bold text-white mb-1">منطقة الإدارة المحمية</h3>
+                    <p class="text-gray-300 text-sm">أدخل رمز الدخول للتحكم الكامل أو تغيير كلمة السر.</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <input type="password" id="admin-pass" placeholder="كلمة السر (الافتراضية: admin)" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 text-center font-medium">
+                    <button onclick="verifyAdminLogin()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition">
+                        دخول لوحة الإدارة
+                    </button>
+
+                    <!-- Functional Password Recovery & Change Triggers -->
+                    <div class="flex justify-between items-center text-xs text-gray-400 pt-2 px-1">
+                        <button onclick="showForgotPasswordModal()" class="hover:text-emerald-400 transition underline">
+                            نسيت كلمة السر؟
+                        </button>
+                        <button onclick="showChangePasswordModal()" class="hover:text-emerald-400 transition underline">
+                            تغيير كلمة المرور
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
-                    <span class="text-gray-400 text-sm">إجمالي الأرباح</span>
-                    <h4 class="text-2xl font-black text-emerald-400 mt-1">250 د.ل</h4>
+            <!-- Actual Dashboard (Hidden until login) -->
+            <div id="admin-dashboard-box" class="hidden bg-slate-800 p-6 rounded-2xl border border-slate-700 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                    <h3 class="text-lg font-bold text-white">لوحة الإدارة العليا</h3>
+                    <button onclick="adminLogout()" class="text-xs bg-rose-950 text-rose-300 border border-rose-800 px-3 py-1.5 rounded-lg">إغلاق</button>
                 </div>
-                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
-                    <span class="text-gray-400 text-sm">التجار المسجلون</span>
-                    <h4 class="text-2xl font-black text-white mt-1">0 تاجر</h4>
-                </div>
-                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
-                    <span class="text-gray-400 text-sm">المنتجات السحابية</span>
-                    <h4 class="text-2xl font-black text-emerald-400 mt-1">0 منتج</h4>
+                <div class="space-y-3">
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+                        <span class="text-sm text-gray-300">إجمالي البضائع المعروضة</span>
+                        <span id="admin-total-items" class="font-black text-emerald-400">0</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+                        <span class="text-sm text-gray-300">حالة النظام السحابي</span>
+                        <span class="font-bold text-emerald-400 text-xs bg-emerald-950 px-2.5 py-1 rounded">متصل (نشط)</span>
+                    </div>
                 </div>
             </div>
         </section>
 
     </main>
 
+    <!-- Modals for Password Management -->
+    <div id="modal-container" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
+        <div id="modal-content" class="bg-slate-800 border border-slate-700 p-6 rounded-2xl max-w-sm w-full space-y-4">
+            <!-- Dynamic Modal Content -->
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="bg-slate-800 border-t border-slate-700 text-gray-400 py-6 text-center text-sm font-medium">
+    <footer class="bg-slate-800 border-t border-slate-700 text-gray-400 py-6 text-center text-sm font-medium mt-12">
         <p>&copy; 2026 منصة الزاد - السوق الليبي الشامل. جميع الحقوق محفوظة.</p>
     </footer>
 
-    <!-- Toggle Script -->
+    <!-- App Logic & Functionality JavaScript -->
     <script>
-        function handleLogin() {
-            // يمكنك تعيين كلمة المرور هنا أو السماح بالدخول مباشرة
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('admin-dashboard').classList.remove('hidden');
+        // Initial Products Data stored in LocalStorage for persistence
+        let products = JSON.parse(localStorage.getItem('alzad_products')) || [
+            { id: 1, title: 'جهاز راوتر LTT K20 4G LTE', price: '250 د.ل', category: 'إلكترونيات', desc: 'حالة ممتازة، اتصال سريع ومستقر للمنزل والعمل في طرابلس.', time: 'منذ ساعة' },
+            { id: 2, title: 'قطع غيار دودج كاليبر أصلية', price: 'حسب السوم', category: 'سيارات وقطع غيار', desc: 'متوفر قطع نظام التوجيه والمحرك بحالة نظيفة جداً.', time: 'منذ 3 ساعات' }
+        ];
+
+        let adminPassword = localStorage.getItem('alzad_admin_pass') || 'admin';
+
+        function renderProducts(itemsToRender = products) {
+            const grid = document.getElementById('products-grid');
+            document.getElementById('product-count').innerText = `${itemsToRender.length} منتج معروض`;
+            document.getElementById('admin-total-items').innerText = products.length;
+
+            if (itemsToRender.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 bg-slate-800/50 rounded-2xl border border-slate-800">لا توجد بضائع مطابقة حالياً. كن أول من يضيف بضاعة عبر حساب التاجر!</div>`;
+                return;
+            }
+
+            grid.innerHTML = itemsToRender.map(p => `
+                <div class="bg-slate-800 rounded-2xl shadow-md hover:shadow-lg transition border border-slate-700 overflow-hidden flex flex-col">
+                    <div class="bg-slate-900 h-36 w-full flex items-center justify-center text-gray-500 font-semibold text-xs border-b border-slate-700">
+                        صورة البضاعة / الإعلان
+                    </div>
+                    <div class="p-4 flex flex-col flex-grow">
+                        <span class="text-xs text-emerald-300 font-bold bg-emerald-950/80 px-2.5 py-1 rounded-md w-fit mb-2 border border-emerald-800">${p.category}</span>
+                        <h4 class="font-bold text-white text-base mb-1">${p.title}</h4>
+                        <p class="text-gray-300 text-sm mb-4 flex-grow">${p.desc}</p>
+                        <div class="flex justify-between items-center pt-3 border-t border-slate-700 mt-auto">
+                            <span class="text-emerald-400 font-black text-base">${p.price}</span>
+                            <span class="text-xs text-gray-400 font-medium">${p.time}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function handleLogout() {
-            document.getElementById('admin-dashboard').classList.add('hidden');
-            document.getElementById('login-section').classList.remove('hidden');
+        function switchTab(tabName) {
+            document.getElementById('tab-market').classList.add('hidden');
+            document.getElementById('tab-merchant').classList.add('hidden');
+            document.getElementById('tab-admin').classList.add('hidden');
+
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = products.filter(p => p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
+            renderProducts(filtered);
+        }
+
+        function handleAddNewProduct(e) {
+            e.preventDefault();
+            const newProd = {
+                id: Date.now(),
+                title: document.getElementById('p-title').value,
+                price: document.getElementById('p-price').value + (document.getElementById('p-price').value.includes('د.ل') ? '' : ' د.ل'),
+                category: document.getElementById('p-category').value,
+                desc: document.getElementById('p-desc').value,
+                time: 'الآن'
+            };
+
+            products.unshift(newProd);
+            localStorage.setItem('alzad_products', JSON.stringify(products));
+            
+            alert('تم نشر بضاعتك بنجاح في السوق العام!');
+            document.getElementById('add-product-form').reset();
+            switchTab('market');
+            renderProducts();
+        }
+
+        // Admin Auth & Password Logic
+        function verifyAdminLogin() {
+            const entered = document.getElementById('admin-pass').value;
+            if (entered === adminPassword) {
+                document.getElementById('admin-login-box').classList.add('hidden');
+                document.getElementById('admin-dashboard-box').classList.remove('hidden');
+            } else {
+                alert('كلمة المرور غير صحيحة!');
+            }
+        }
+
+        function adminLogout() {
+            document.getElementById('admin-dashboard-box').classList.add('hidden');
+            document.getElementById('admin-login-box').classList.remove('hidden');
             document.getElementById('admin-pass').value = '';
         }
+
+        function showForgotPasswordModal() {
+            const modal = document.getElementById('modal-container');
+            const content = document.getElementById('modal-content');
+            modal.classList.remove('hidden');
+            content.innerHTML = `
+                <h4 class="text-lg font-bold text-white mb-2">استعادة كلمة المرور</h4>
+                <p class="text-xs text-gray-300 mb-3">أدخل بريدك الإداري لإرسال رابط إعادة تعيين كلمة السر:</p>
+                <input type="email" id="rec-email" placeholder="admin@alzad.ly" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm mb-3">
+                <div class="flex gap-2">
+                    <button onclick="alert('تم إرسال تعليمات الاستعادة إلى بريدك.'); closeModal();" class="flex-1 bg-emerald-600 py-2.5 rounded-xl text-white font-bold text-sm">إرسال</button>
+                    <button onclick="closeModal()" class="px-4 bg-slate-700 py-2.5 rounded-xl text-gray-300 text-sm">إلغاء</button>
+                </div>
+            `;
+        }
+
+        function showChangePasswordModal() {
+            const modal = document.getElementById('modal-container');
+            const content = document.getElementById('modal-content');
+            modal.classList.remove('hidden');
+            content.innerHTML = `
+                <h4 class="text-lg font-bold text-white mb-2">تغيير كلمة المرور</h4>
+                <div class="space-y-3">
+                    <input type="password" id="old-pass" placeholder="كلمة المرور الحالية" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm">
+                    <input type="password" id="new-pass" placeholder="كلمة المرور الجديدة" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm">
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="executePasswordChange()" class="flex-1 bg-emerald-600 py-2.5 rounded-xl text-white font-bold text-sm">حفظ التغيير</button>
+                        <button onclick="closeModal()" class="px-4 bg-slate-700 py-2.5 rounded-xl text-gray-300 text-sm">إلغاء</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function executePasswordChange() {
+            const oldP = document.getElementById('old-pass').value;
+            const newP = document.getElementById('new-pass').value;
+            if (oldP === adminPassword) {
+                if (newP.length >= 4) {
+                    adminPassword = newP;
+                    localStorage.setItem('alzad_admin_pass', newP);
+                    alert('تم تغيير كلمة المرور بنجاح!');
+                    closeModal();
+                } else {
+                    alert('كلمة المرور الجديدة يجب أن تكون 4 أحرف أو أرقام على الأقل.');
+                }
+            } else {
+                alert('كلمة المرور الحالية غير صحيحة!');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-container').classList.add('hidden');
+        }
+
+        // Initialize display on load
+        renderProducts();
     </script>
 </body>
 </html>
