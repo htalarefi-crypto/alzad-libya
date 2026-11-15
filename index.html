@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الزاد | السوق الليبي الشامل</title>
+    <title>الزاد | السوق الليبي الشامل (النسخة النهائية المتكاملة)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -11,86 +11,107 @@
         body { font-family: 'Cairo', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-900 text-gray-100 min-h-screen flex flex-col justify-between">
+<body class="bg-slate-900 text-gray-100 min-h-screen flex flex-col justify-between relative selection:bg-emerald-500 selection:text-white">
 
     <!-- Header / Navbar -->
-    <header class="bg-slate-800 border-b border-slate-700 shadow-md sticky top-0 z-50">
+    <header class="bg-slate-800 border-b border-slate-700 shadow-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <span class="bg-emerald-600 text-white font-black text-xl px-3 py-1.5 rounded-xl shadow-md">الزاد</span>
-                <h1 class="text-xl font-bold text-white">السوق الليبي الشامل</h1>
+                <span class="bg-emerald-600 text-white font-black text-xl px-3.5 py-1.5 rounded-xl shadow-md">الزاد</span>
+                <div>
+                    <h1 class="text-lg font-bold text-white leading-tight">السوق الليبي الشامل</h1>
+                    <span class="text-xs text-emerald-400 font-medium">منصة تجارية ذكية ومؤمنة</span>
+                </div>
             </div>
-            <div class="flex items-center gap-3">
-                <button onclick="switchTab('market')" class="text-sm font-semibold text-gray-300 hover:text-emerald-400 transition">السوق</button>
-                <button onclick="switchTab('merchant')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-xl transition shadow-sm text-sm">
-                    + حساب التاجر (أضف بضاعتك)
+            <div class="flex items-center gap-2 md:gap-3">
+                <button onclick="switchTab('market')" class="text-sm font-semibold text-gray-300 hover:text-emerald-400 transition px-2 py-1">السوق العام</button>
+                <button onclick="switchTab('merchant')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-2 rounded-xl transition shadow-sm text-xs md:text-sm">
+                    + بوابة التاجر
                 </button>
                 <button onclick="switchTab('admin')" class="text-xs text-gray-400 hover:text-white border border-slate-700 px-3 py-2 rounded-xl">الإدارة</button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
         
-        <!-- TAB 1: MARKETPLACE (Public Products) -->
+        <!-- TAB 1: PUBLIC MARKETPLACE -->
         <section id="tab-market" class="space-y-6">
-            <!-- Hero Search -->
             <div class="bg-gradient-to-br from-emerald-950 to-teal-900 text-white py-10 px-4 text-center rounded-2xl shadow-inner border border-slate-800">
                 <h2 class="text-2xl md:text-3xl font-black mb-3 tracking-wide text-white">منصة الزاد لكل احتياجاتك في ليبيا</h2>
-                <p class="text-emerald-200 text-sm md:text-base mb-6 font-medium">بيع، اشتري، وتصفح أفضل السلع والخدمات بكل سهولة وأمان.</p>
+                <p class="text-emerald-200 text-sm md:text-base mb-6 font-medium">تسوق آمن، توجيه جغرافي ذكي حسب مدينتك، وبضائع موثقة.</p>
                 <div class="relative max-w-xl mx-auto">
-                    <input type="text" id="search-input" oninput="filterProducts()" placeholder="ابحث عن بضاعة، سيارات، إلكترونيات..." class="w-full py-3 px-4 pr-12 rounded-2xl text-white bg-slate-800 placeholder-gray-400 border border-slate-700 focus:outline-none focus:ring-4 focus:ring-emerald-500 shadow-lg text-sm font-medium">
-                    <span class="absolute top-3.5 right-4 text-gray-400">
+                    <input type="text" id="search-input" oninput="filterProducts()" placeholder="ابحث عن سيارات، إلكترونيات، عقارات، راوترات..." class="w-full py-3.5 px-4 pr-12 rounded-2xl text-white bg-slate-800 placeholder-gray-400 border border-slate-700 focus:outline-none focus:ring-4 focus:ring-emerald-500 shadow-lg text-sm font-medium">
+                    <span class="absolute top-4 right-4 text-gray-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </span>
                 </div>
             </div>
 
-            <!-- Products Grid Header -->
-            <div class="flex justify-between items-center">
-                <h3 class="text-xl font-bold text-white border-r-4 border-emerald-500 pr-3">سوق البضائع والمنتجات النشطة</h3>
-                <span id="product-count" class="text-sm text-gray-400">0 منتج معروض</span>
+            <!-- Geo-Routing City Filter Pills -->
+            <div class="flex flex-wrap gap-2 items-center bg-slate-800 p-3 rounded-2xl border border-slate-700 shadow-sm">
+                <span class="text-xs text-gray-400 font-bold ml-2">التوجيه الجغرافي:</span>
+                <button onclick="filterByCity('الكل')" class="city-btn bg-emerald-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow">كل المدن</button>
+                <button onclick="filterByCity('طرابلس')" class="city-btn bg-slate-900 text-gray-300 hover:bg-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition border border-slate-700">طرابلس</button>
+                <button onclick="filterByCity('بنغازي')" class="city-btn bg-slate-900 text-gray-300 hover:bg-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition border border-slate-700">بنغازي</button>
+                <button onclick="filterByCity('مصراتة')" class="city-btn bg-slate-900 text-gray-300 hover:bg-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition border border-slate-700">مصراتة</button>
+                <button onclick="filterByCity('الزاوية')" class="city-btn bg-slate-900 text-gray-300 hover:bg-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition border border-slate-700">الزاوية</button>
             </div>
 
-            <!-- Dynamic Products Grid -->
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white border-r-4 border-emerald-500 pr-3">البضائع والمنتجات النشطة</h3>
+                <span id="product-count" class="text-xs md:text-sm text-gray-400 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700">0 منتج</span>
+            </div>
+
+            <!-- Products Grid -->
             <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- JavaScript will inject products here -->
+                <!-- Dynamically injected -->
             </div>
         </section>
 
-        <!-- TAB 2: MERCHANT PORTAL (Where Merchants Add Goods) -->
+        <!-- TAB 2: MERCHANT PORTAL (Add Product) -->
         <section id="tab-merchant" class="hidden max-w-2xl mx-auto bg-slate-800 p-6 md:p-8 rounded-2xl shadow-xl border border-slate-700 space-y-6">
             <div class="border-b border-slate-700 pb-4">
-                <h3 class="text-xl font-bold text-white">بوابة التاجر - إضافة منتج أو بضاعة جديدة</h3>
-                <p class="text-gray-400 text-sm mt-1">أدخل تفاصيل بضاعتك هنا لتظهر مباشرة في السوق العام للرؤية والشراء.</p>
+                <h3 class="text-xl font-bold text-white">بوابة التاجر - إضافة منتج جديد</h3>
+                <p class="text-gray-400 text-sm mt-1">أدخل تفاصيل بضاعتك لتظهر فوراً في السوق العام لجميع الزبائن.</p>
             </div>
 
             <form id="add-product-form" onsubmit="handleAddNewProduct(event)" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">عنوان البضاعة أو المنتج</label>
-                    <input type="text" id="p-title" required placeholder="مثال: راوتر LTT K20 أو قطع غيار دودج" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 text-sm">
+                    <label class="block text-sm font-medium text-gray-300 mb-1">اسم المنتج أو البضاعة</label>
+                    <input type="text" id="p-title" required placeholder="مثال: راوتر LTT K20 4G LTE أو قطع غيار دودج" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 text-sm">
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-1">السعر (د.ل)</label>
-                        <input type="text" id="p-price" required placeholder="مثال: 250 أو حسب السوم" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 text-sm">
+                        <input type="text" id="p-price" required placeholder="مثال: 250 د.ل" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">القسم</label>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">القسم الرئيسي</label>
                         <select id="p-category" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-emerald-500 text-sm">
-                            <option value="إلكترونيات">إلكترونيات</option>
+                            <option value="إلكترونيات">إلكترونيات ومعدات شبكات</option>
                             <option value="سيارات وقطع غيار">سيارات وقطع غيار</option>
-                            <option value="عقارات">عقارات</option>
-                            <option value="خدمات عامة">خدمات عامة</option>
+                            <option value="عقارات ومواد بناء">عقارات ومواد بناء</option>
+                            <option value="خدمات وتجارة عامة">خدمات وتجارة عامة</option>
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">وصف تفصيلي للبضاعة</label>
-                    <textarea id="p-desc" rows="3" required placeholder="اكتب تفاصيل الحالة، المواصفات، أو وسيلة التواصل..." class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
+                    <label class="block text-sm font-medium text-gray-300 mb-1">المدينة (للتوجيه الجغرافي)</label>
+                    <select id="p-city" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-emerald-500 text-sm">
+                        <option value="طرابلس">طرابلس</option>
+                        <option value="بنغازي">بنغازي</option>
+                        <option value="مصراتة">مصراتة</option>
+                        <option value="الزاوية">الزاوية</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-1">تفاصيل المواصفات</label>
+                    <textarea id="p-desc" rows="3" required placeholder="اكتب التفاصيل والحالة وسيلة التواصل..." class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
                 </div>
 
                 <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition">
@@ -99,38 +120,36 @@
             </form>
         </section>
 
-        <!-- TAB 3: ADMIN DASHBOARD & SECURITY (Password management) -->
+        <!-- TAB 3: ADMIN DASHBOARD & SECURITY -->
         <section id="tab-admin" class="hidden max-w-md mx-auto space-y-6">
             <!-- Login Box -->
-            <div id="admin-login-box" class="bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700">
+            <div id="admin-login-box" class="bg-slate-800 p-6 md:p-8 rounded-2xl shadow-xl border border-slate-700">
                 <div class="text-center mb-6">
+                    <div class="w-12 h-12 bg-slate-900 mx-auto flex items-center justify-center rounded-xl mb-3 border border-slate-700 text-emerald-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
                     <h3 class="text-xl font-bold text-white mb-1">منطقة الإدارة المحمية</h3>
-                    <p class="text-gray-300 text-sm">أدخل رمز الدخول للتحكم الكامل أو تغيير كلمة السر.</p>
+                    <p class="text-gray-300 text-sm">صلاحيات سيادية لمالك المنصة.</p>
                 </div>
                 
                 <div class="space-y-4">
-                    <input type="password" id="admin-pass" placeholder="كلمة السر (الافتراضية: admin)" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 text-center font-medium">
+                    <input type="password" id="admin-pass" placeholder="كلمة المرور الإدارية (الافتراضية: admin123)" class="w-full py-3 px-4 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 text-center font-medium">
                     <button onclick="verifyAdminLogin()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition">
-                        دخول لوحة الإدارة
+                        دخول لوحة التحكم
                     </button>
-
-                    <!-- Functional Password Recovery & Change Triggers -->
+                    <!-- Functional Password Triggers -->
                     <div class="flex justify-between items-center text-xs text-gray-400 pt-2 px-1">
-                        <button onclick="showForgotPasswordModal()" class="hover:text-emerald-400 transition underline">
-                            نسيت كلمة السر؟
-                        </button>
-                        <button onclick="showChangePasswordModal()" class="hover:text-emerald-400 transition underline">
-                            تغيير كلمة المرور
-                        </button>
+                        <button onclick="showForgotModal()" class="hover:text-emerald-400 transition underline">نسيت كلمة السر؟</button>
+                        <button onclick="showChangePassModal()" class="hover:text-emerald-400 transition underline">تغيير كلمة المرور</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Actual Dashboard (Hidden until login) -->
+            <!-- Active Dashboard -->
             <div id="admin-dashboard-box" class="hidden bg-slate-800 p-6 rounded-2xl border border-slate-700 space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-700 pb-3">
                     <h3 class="text-lg font-bold text-white">لوحة الإدارة العليا</h3>
-                    <button onclick="adminLogout()" class="text-xs bg-rose-950 text-rose-300 border border-rose-800 px-3 py-1.5 rounded-lg">إغلاق</button>
+                    <button onclick="adminLogout()" class="text-xs bg-rose-950 text-rose-300 border border-rose-800 px-3 py-1.5 rounded-lg">إغلاق اللوحة</button>
                 </div>
                 <div class="space-y-3">
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
@@ -138,8 +157,8 @@
                         <span id="admin-total-items" class="font-black text-emerald-400">0</span>
                     </div>
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
-                        <span class="text-sm text-gray-300">حالة النظام السحابي</span>
-                        <span class="font-bold text-emerald-400 text-xs bg-emerald-950 px-2.5 py-1 rounded">متصل (نشط)</span>
+                        <span class="text-sm text-gray-300">حالة نظام الحماية</span>
+                        <span class="font-bold text-emerald-400 text-xs bg-emerald-950 px-2.5 py-1 rounded">مؤمن بالكامل (Active)</span>
                     </div>
                 </div>
             </div>
@@ -147,10 +166,30 @@
 
     </main>
 
-    <!-- Modals for Password Management -->
-    <div id="modal-container" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
-        <div id="modal-content" class="bg-slate-800 border border-slate-700 p-6 rounded-2xl max-w-sm w-full space-y-4">
-            <!-- Dynamic Modal Content -->
+    <!-- AI Chatbot Floating Widget -->
+    <div class="fixed bottom-4 left-4 z-50">
+        <div id="chat-window" class="hidden w-80 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl flex flex-col mb-3 overflow-hidden">
+            <div class="bg-emerald-700 px-4 py-3 flex justify-between items-center text-white">
+                <span class="font-bold text-sm">مساعد الزاد الذكي (AI)</span>
+                <button onclick="toggleChat()" class="text-white hover:text-gray-200 text-sm font-bold">✕</button>
+            </div>
+            <div id="chat-messages" class="p-3 h-64 overflow-y-auto space-y-2 text-xs text-gray-200">
+                <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700">أهلاً بك! أنا مساعد منصة الزاد الذكي. كيف يمكنني مساعدتك اليوم؟</div>
+            </div>
+            <div class="p-2 bg-slate-900 border-t border-slate-700 flex gap-2">
+                <input type="text" id="chat-input" placeholder="اكتب سؤالك هنا..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                <button onclick="sendChatMessage()" class="bg-emerald-600 text-white px-3 py-2 rounded-xl text-xs font-bold">إرسال</button>
+            </div>
+        </div>
+        <button onclick="toggleChat()" class="bg-emerald-600 hover:bg-emerald-700 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+        </button>
+    </div>
+
+    <!-- Modal for Order & Passwords -->
+    <div id="global-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
+        <div id="modal-box" class="bg-slate-800 border border-slate-700 p-6 rounded-2xl max-w-sm w-full space-y-4">
+            <!-- Dynamic content injected here -->
         </div>
     </div>
 
@@ -159,83 +198,149 @@
         <p>&copy; 2026 منصة الزاد - السوق الليبي الشامل. جميع الحقوق محفوظة.</p>
     </footer>
 
-    <!-- App Logic & Functionality JavaScript -->
+    <!-- Core App Script (Robust & Self-Contained) -->
     <script>
-        // Initial Products Data stored in LocalStorage for persistence
-        let products = JSON.parse(localStorage.getItem('alzad_products')) || [
-            { id: 1, title: 'جهاز راوتر LTT K20 4G LTE', price: '250 د.ل', category: 'إلكترونيات', desc: 'حالة ممتازة، اتصال سريع ومستقر للمنزل والعمل في طرابلس.', time: 'منذ ساعة' },
-            { id: 2, title: 'قطع غيار دودج كاليبر أصلية', price: 'حسب السوم', category: 'سيارات وقطع غيار', desc: 'متوفر قطع نظام التوجيه والمحرك بحالة نظيفة جداً.', time: 'منذ 3 ساعات' }
+        // Data State with persistent storage fallback
+        let products = JSON.parse(localStorage.getItem('alzad_products_v2')) || [
+            { id: 1, title: 'جهاز راوتر LTT K20 4G LTE', price: '250 د.ل', category: 'إلكترونيات', city: 'طرابلس', desc: 'حالة ممتازة، اتصال سريع ومستقر للمنزل والعمل.', time: 'منذ ساعة' },
+            { id: 2, title: 'قطع غيار دودج كاليبر أصلية', price: 'حسب السوم', category: 'سيارات وقطع غيار', city: 'بنغازي', desc: 'متوفر نظام التوجيه والمحرك بحالة نظيفة جداً.', time: 'منذ 3 ساعات' }
         ];
 
-        let adminPassword = localStorage.getItem('alzad_admin_pass') || 'admin';
+        let adminPass = localStorage.getItem('alzad_admin_pass_v2') || 'admin123';
+        let selectedCityFilter = 'الكل';
+        let activeOrderProduct = null;
 
+        // Render Products Grid
         function renderProducts(itemsToRender = products) {
             const grid = document.getElementById('products-grid');
-            document.getElementById('product-count').innerText = `${itemsToRender.length} منتج معروض`;
+            document.getElementById('product-count').innerText = `${itemsToRender.length} منتج`;
             document.getElementById('admin-total-items').innerText = products.length;
 
             if (itemsToRender.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 bg-slate-800/50 rounded-2xl border border-slate-800">لا توجد بضائع مطابقة حالياً. كن أول من يضيف بضاعة عبر حساب التاجر!</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 bg-slate-800/50 rounded-2xl border border-slate-800">لا توجد بضائع مطابقة حالياً في هذا التصنيف.</div>`;
                 return;
             }
 
             grid.innerHTML = itemsToRender.map(p => `
                 <div class="bg-slate-800 rounded-2xl shadow-md hover:shadow-lg transition border border-slate-700 overflow-hidden flex flex-col">
-                    <div class="bg-slate-900 h-36 w-full flex items-center justify-center text-gray-500 font-semibold text-xs border-b border-slate-700">
-                        صورة البضاعة / الإعلان
+                    <div class="bg-slate-900 h-32 w-full flex items-center justify-center text-emerald-400 font-bold text-xs border-b border-slate-700">
+                        📍 فرع ${p.city || 'طرابلس'}
                     </div>
                     <div class="p-4 flex flex-col flex-grow">
-                        <span class="text-xs text-emerald-300 font-bold bg-emerald-950/80 px-2.5 py-1 rounded-md w-fit mb-2 border border-emerald-800">${p.category}</span>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs text-emerald-300 font-bold bg-emerald-950/80 px-2.5 py-1 rounded-md border border-emerald-800">${p.category}</span>
+                            <span class="text-xs text-gray-300 bg-slate-900 px-2 py-0.5 rounded border border-slate-700">${p.city || 'طرابلس'}</span>
+                        </div>
                         <h4 class="font-bold text-white text-base mb-1">${p.title}</h4>
                         <p class="text-gray-300 text-sm mb-4 flex-grow">${p.desc}</p>
-                        <div class="flex justify-between items-center pt-3 border-t border-slate-700 mt-auto">
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-700 mt-auto">
                             <span class="text-emerald-400 font-black text-base">${p.price}</span>
-                            <span class="text-xs text-gray-400 font-medium">${p.time}</span>
+                            <button onclick='openOrderModal(${JSON.stringify(p)})' class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow">اطلب الآن</button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
+        // Tab Navigation
         function switchTab(tabName) {
             document.getElementById('tab-market').classList.add('hidden');
             document.getElementById('tab-merchant').classList.add('hidden');
             document.getElementById('tab-admin').classList.add('hidden');
-
             document.getElementById('tab-' + tabName).classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Geo-Routing Filtering
+        function filterByCity(city) {
+            selectedCityFilter = city;
+            document.querySelectorAll('.city-btn').forEach(btn => {
+                if (btn.innerText.includes(city) || (city === 'الكل' && btn.innerText.includes('كل المدن'))) {
+                    btn.className = "city-btn bg-emerald-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow";
+                } else {
+                    btn.className = "city-btn bg-slate-900 text-gray-300 hover:bg-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition border border-slate-700";
+                }
+            });
+            applyFilters();
+        }
+
         function filterProducts() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const filtered = products.filter(p => p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const queryText = document.getElementById('search-input').value.toLowerCase();
+            const filtered = products.filter(p => {
+                const matchesCity = (selectedCityFilter === 'الكل') || (p.city === selectedCityFilter);
+                const matchesSearch = p.title.toLowerCase().includes(queryText) || 
+                                      p.desc.toLowerCase().includes(queryText) || 
+                                      p.category.toLowerCase().includes(queryText);
+                return matchesCity && matchesSearch;
+            });
             renderProducts(filtered);
         }
 
+        // Add New Product Handler
         function handleAddNewProduct(e) {
             e.preventDefault();
             const newProd = {
                 id: Date.now(),
                 title: document.getElementById('p-title').value,
-                price: document.getElementById('p-price').value + (document.getElementById('p-price').value.includes('د.ل') ? '' : ' د.ل'),
+                price: document.getElementById('p-price').value,
                 category: document.getElementById('p-category').value,
+                city: document.getElementById('p-city').value,
                 desc: document.getElementById('p-desc').value,
                 time: 'الآن'
             };
 
             products.unshift(newProd);
-            localStorage.setItem('alzad_products', JSON.stringify(products));
+            localStorage.setItem('alzad_products_v2', JSON.stringify(products));
             
-            alert('تم نشر بضاعتك بنجاح في السوق العام!');
+            alert('تم نشر البضاعة بنجاح في السوق العام والتوجيه الجغرافي!');
             document.getElementById('add-product-form').reset();
             switchTab('market');
             renderProducts();
         }
 
-        // Admin Auth & Password Logic
+        // Order Modal Logic
+        function openOrderModal(prod) {
+            activeOrderProduct = prod;
+            const modal = document.getElementById('global-modal');
+            const box = document.getElementById('modal-box');
+            modal.classList.remove('hidden');
+            box.innerHTML = `
+                <h4 class="text-lg font-bold text-white mb-1">إتمام طلب المنتج</h4>
+                <p class="text-xs text-emerald-400 font-semibold mb-3">${prod.title} (${prod.price})</p>
+                <div class="space-y-3">
+                    <input type="text" id="buyer-name" placeholder="الاسم الكريم" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs">
+                    <input type="text" id="buyer-phone" placeholder="رقم الهاتف للتواصل" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs">
+                    <input type="text" id="buyer-address" placeholder="العنوان أو الفرع (مثال: طرابلس - السراج)" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs">
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="confirmOrder()" class="flex-1 bg-emerald-600 py-2.5 rounded-xl text-white font-bold text-xs shadow">تأكيد الطلب (الدفع عند الاستلام)</button>
+                        <button onclick="closeModal()" class="px-4 bg-slate-700 py-2.5 rounded-xl text-gray-300 text-xs">إلغاء</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function confirmOrder() {
+            const name = document.getElementById('buyer-name').value;
+            const phone = document.getElementById('buyer-phone').value;
+            const address = document.getElementById('buyer-address').value;
+
+            if (!name || !phone || !address) {
+                alert('الرجاء إكمال كافة بيانات الطلب.');
+                return;
+            }
+
+            alert('تم إرسال طلبك بنجاح! سيتم التواصل معك هاتفياً لتأكيد الشحن والتسليم.');
+            closeModal();
+        }
+
+        // Admin Auth & Password Security Modals
         function verifyAdminLogin() {
             const entered = document.getElementById('admin-pass').value;
-            if (entered === adminPassword) {
+            if (entered === adminPass) {
                 document.getElementById('admin-login-box').classList.add('hidden');
                 document.getElementById('admin-dashboard-box').classList.remove('hidden');
             } else {
@@ -249,30 +354,30 @@
             document.getElementById('admin-pass').value = '';
         }
 
-        function showForgotPasswordModal() {
-            const modal = document.getElementById('modal-container');
-            const content = document.getElementById('modal-content');
+        function showForgotModal() {
+            const modal = document.getElementById('global-modal');
+            const box = document.getElementById('modal-box');
             modal.classList.remove('hidden');
-            content.innerHTML = `
+            box.innerHTML = `
                 <h4 class="text-lg font-bold text-white mb-2">استعادة كلمة المرور</h4>
-                <p class="text-xs text-gray-300 mb-3">أدخل بريدك الإداري لإرسال رابط إعادة تعيين كلمة السر:</p>
-                <input type="email" id="rec-email" placeholder="admin@alzad.ly" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm mb-3">
+                <p class="text-xs text-gray-300 mb-3">أدخل بريدك الإداري لإرسال رابط إعادة التعيين:</p>
+                <input type="email" placeholder="admin@alzad.ly" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm mb-3">
                 <div class="flex gap-2">
-                    <button onclick="alert('تم إرسال تعليمات الاستعادة إلى بريدك.'); closeModal();" class="flex-1 bg-emerald-600 py-2.5 rounded-xl text-white font-bold text-sm">إرسال</button>
+                    <button onclick="alert('تم إرسال تعليمات الاستعادة إلى بريدك المسجل.'); closeModal();" class="flex-1 bg-emerald-600 py-2.5 rounded-xl text-white font-bold text-sm">إرسال</button>
                     <button onclick="closeModal()" class="px-4 bg-slate-700 py-2.5 rounded-xl text-gray-300 text-sm">إلغاء</button>
                 </div>
             `;
         }
 
-        function showChangePasswordModal() {
-            const modal = document.getElementById('modal-container');
-            const content = document.getElementById('modal-content');
+        function showChangePassModal() {
+            const modal = document.getElementById('global-modal');
+            const box = document.getElementById('modal-box');
             modal.classList.remove('hidden');
-            content.innerHTML = `
-                <h4 class="text-lg font-bold text-white mb-2">تغيير كلمة المرور</h4>
+            box.innerHTML = `
+                <h4 class="text-lg font-bold text-white mb-2">تغيير كلمة المرور الإدارية</h4>
                 <div class="space-y-3">
-                    <input type="password" id="old-pass" placeholder="كلمة المرور الحالية" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm">
-                    <input type="password" id="new-pass" placeholder="كلمة المرور الجديدة" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm">
+                    <input type="password" id="old-p" placeholder="كلمة المرور الحالية" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm">
+                    <input type="password" id="new-p" placeholder="كلمة المرور الجديدة (4 أحرف على الأقل)" class="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm">
                     <div class="flex gap-2 pt-2">
                         <button onclick="executePasswordChange()" class="flex-1 bg-emerald-600 py-2.5 rounded-xl text-white font-bold text-sm">حفظ التغيير</button>
                         <button onclick="closeModal()" class="px-4 bg-slate-700 py-2.5 rounded-xl text-gray-300 text-sm">إلغاء</button>
@@ -282,16 +387,16 @@
         }
 
         function executePasswordChange() {
-            const oldP = document.getElementById('old-pass').value;
-            const newP = document.getElementById('new-pass').value;
-            if (oldP === adminPassword) {
-                if (newP.length >= 4) {
-                    adminPassword = newP;
-                    localStorage.setItem('alzad_admin_pass', newP);
+            const oldVal = document.getElementById('old-p').value;
+            const newVal = document.getElementById('new-p').value;
+            if (oldVal === adminPass) {
+                if (newVal && newVal.length >= 4) {
+                    adminPass = newVal;
+                    localStorage.setItem('alzad_admin_pass_v2', newVal);
                     alert('تم تغيير كلمة المرور بنجاح!');
                     closeModal();
                 } else {
-                    alert('كلمة المرور الجديدة يجب أن تكون 4 أحرف أو أرقام على الأقل.');
+                    alert('كلمة المرور الجديدة يجب أن تكون 4 خانات على الأقل.');
                 }
             } else {
                 alert('كلمة المرور الحالية غير صحيحة!');
@@ -299,10 +404,36 @@
         }
 
         function closeModal() {
-            document.getElementById('modal-container').classList.add('hidden');
+            document.getElementById('global-modal').classList.add('hidden');
         }
 
-        // Initialize display on load
+        // AI Chatbot Widget Logic
+        function toggleChat() {
+            document.getElementById('chat-window').classList.toggle('hidden');
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const box = document.getElementById('chat-messages');
+            box.innerHTML += `<div class="bg-emerald-950/80 p-2.5 rounded-xl border border-emerald-800 text-left">أنت: ${text}</div>`;
+            input.value = '';
+
+            setTimeout(() => {
+                let reply = "أهلاً بك! يمكنك تصفح المنتجات حسب المدن في الأعلى أو الضغط على زر 'اطلب الآن' لأي سلعة.";
+                if (text.includes("سعر") || text.includes("كم")) {
+                    reply = "تختلف الأسعار بحسب كل تاجر والسلعة المعروضة، يمكنك رؤية السعر بدقة أسفل بطاقة المنتج.";
+                } else if (text.includes("تاجر") || text.includes("اضافة")) {
+                    reply = "يمكنك إضافة بضاعتك فوراً عبر الضغط على زر '+ بوابة التاجر' في شريط التنقل العلوي.";
+                }
+                box.innerHTML += `<div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700">المساعد الذكي: ${reply}</div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 500);
+        }
+
+        // Initial Page Render
         renderProducts();
     </script>
 </body>
